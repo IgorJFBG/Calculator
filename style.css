@@ -1,0 +1,56 @@
+body {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	background-color: #fdfdfd;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#content {
+	background-color: white;
+	border: 1px solid #ccc;
+	border-radius: 11px;
+}
+
+#result {
+	border: 0px;
+	border-radius: 10px 10px 0px 0px;
+	padding: 10px;
+	background-color: #ccc;
+
+	color: #555;
+	text-align: right;
+	font-size: 24pt;
+	font-family: 'Consolas', monospace;
+}
+
+#buttons {
+	padding: 10px;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+	border-radius: 10px;
+}
+
+td {
+	width: 25%;
+}
+
+#cel {
+	width: 100%;
+}
+
+button {
+	width: 100%;
+	height: 75px;
+	font-size: 20pt;
+	font-family: 'Consolas', monospace;
+	border: 1px solid #ccc;
+	color: #555;
+	cursor: pointer;
+}
