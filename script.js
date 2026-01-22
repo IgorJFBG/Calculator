@@ -21,12 +21,66 @@ const formatNumber = (n, decimals = 12) => {
 };
 
 const showExpression = () => {
-	let expStr = expression.join(' ');
+    let displayArr = [...expression];
+
+    let rootIndex = displayArr.indexOf('√');
+
+    if (rootIndex !== -1) {
+        let radicandStart = rootIndex - 1;
+        if (displayArr[rootIndex - 1] === ')') {
+            let count = 0;
+            for (let j = rootIndex - 1; j >= 0; j--) {
+                if (displayArr[j] === ')') count++;
+                if (displayArr[j] === '(') count--;
+                if (count === 0) {
+                    radicandStart = j;
+                    break;
+                }
+            }
+        }
+        const radicand = displayArr.slice(radicandStart, rootIndex);
+
+        let indexEnd = rootIndex + 1;
+        if (indexEnd < displayArr.length) {
+            if (displayArr[indexEnd] === '(') {
+                let count = 0;
+                let foundMatch = false;
+                for (let j = indexEnd; j < displayArr.length; j++) {
+                    if (displayArr[j] === '(') count++;
+                    if (displayArr[j] === ')') count--;
+                    if (count === 0) {
+                        indexEnd = j;
+                        foundMatch = true;
+                        break;
+                    }
+                }
+                // Se não encontrar o ')', define o fim como o último elemento do array
+                if (!foundMatch) {
+                    indexEnd = displayArr.length - 1;
+                }
+            }
+        } else {
+            indexEnd = rootIndex;
+        }
+        
+        const indexVal = displayArr.slice(rootIndex + 1, indexEnd + 1);
+
+        displayArr.splice(
+            radicandStart, 
+            (indexEnd - radicandStart) + 1, 
+            ...indexVal, 
+            '√', 
+            ...radicand
+        );
+    }
+
+	let expStr = displayArr.join(' ');
 	if (expStr === '') {
 		expStr = '0';
 	}
 
 	console.log('Expressão:', expStr);
+    console.log('Containers:', containers);
 
 	document.getElementById('result').value = expStr;
 };
@@ -77,11 +131,17 @@ const addNumber = (number) => {
 
 const ACFunction = () => {
 	expression = [];
+    containers = 0;
 	showExpression();
 };
 
 const CEFunction = () => {
-	expression.pop();
+	const item = expression.pop();
+    if (item === '(') {
+        containers--;
+    } else if (item === ')') {
+        containers++;
+    }
 	showExpression();
 };
 
@@ -209,7 +269,7 @@ const equal = () => {
 				) {
 					priorityMultiDivisor = true;
 					startIndex += 2;
-					continue;
+					break;
 				}
 
 				if (
@@ -218,13 +278,14 @@ const equal = () => {
 				) {
 					priorityElevateRoot = true;
 					startIndex += 2;
-					continue;
+					break;
 				}
 
 				expression[firstNumIndex] = formatNumber(
 					Number(expression[firstNumIndex]) +
 						Number(expression[secondNumIndex]),
 				);
+                expression.splice(operatorIndex, 2);
 				break;
 			case '-':
 				if (
@@ -233,7 +294,7 @@ const equal = () => {
 				) {
 					priorityMultiDivisor = true;
 					startIndex += 2;
-					continue;
+					break;
 				}
 
 				if (
@@ -242,25 +303,24 @@ const equal = () => {
 				) {
 					priorityElevateRoot = true;
 					startIndex += 2;
-					continue;
+					break;
 				}
 
 				expression[firstNumIndex] = formatNumber(
 					Number(expression[firstNumIndex]) -
 						Number(expression[secondNumIndex]),
 				);
+                expression.splice(operatorIndex, 2);
 				break;
 			case '×':
-				if (expression[secondNumIndex + 1] < expression.length) {
-					if (
-						expression[secondNumIndex + 1] === '^' ||
-						expression[secondNumIndex + 1] === '√'
-					) {
-						priorityElevateRoot = true;
-						startIndex += 2;
-						continue;
-					}
-				}
+                if (
+                    expression[secondNumIndex + 1] === '^' ||
+                    expression[secondNumIndex + 1] === '√'
+                ) {
+                    priorityElevateRoot = true;
+                    startIndex += 2;
+                    break;
+                }
 
 				expression[firstNumIndex] = formatNumber(
 					Number(expression[firstNumIndex]) *
@@ -271,18 +331,17 @@ const equal = () => {
 					priorityMultiDivisor = false;
 					startIndex -= 2;
 				}
+                expression.splice(operatorIndex, 2);
 				break;
 			case '÷':
-				if (expression[secondNumIndex + 1] < expression.length) {
-					if (
-						expression[secondNumIndex + 1] === '^' ||
-						expression[secondNumIndex + 1] === '√'
-					) {
-						priorityElevateRoot = true;
-						startIndex += 2;
-						continue;
-					}
-				}
+				if (
+                    expression[secondNumIndex + 1] === '^' ||
+                    expression[secondNumIndex + 1] === '√'
+                ) {
+                    priorityElevateRoot = true;
+                    startIndex += 2;
+                    break;
+                }
 
 				if (Number(expression[secondNumIndex]) === 0) {
 					error('Erro: Divisão por zero');
@@ -298,6 +357,7 @@ const equal = () => {
 					priorityMultiDivisor = false;
 					startIndex -= 2;
 				}
+                expression.splice(operatorIndex, 2);
 				break;
 			case '^':
 				expression[firstNumIndex] = formatNumber(
@@ -307,15 +367,11 @@ const equal = () => {
 					),
 				);
 
-				if (priorityMultiDivisor) {
-					priorityMultiDivisor = false;
-					startIndex -= 2;
-				}
-
 				if (priorityElevateRoot) {
 					priorityElevateRoot = false;
 					startIndex -= 2;
 				}
+                expression.splice(operatorIndex, 2);
 				break;
 			case '√':
 				expression[firstNumIndex] = formatNumber(
@@ -325,24 +381,92 @@ const equal = () => {
 					),
 				);
 
-				if (priorityMultiDivisor) {
-					priorityMultiDivisor = false;
-					startIndex -= 2;
-				}
-
 				if (priorityElevateRoot) {
 					priorityElevateRoot = false;
 					startIndex -= 2;
 				}
+                expression.splice(operatorIndex, 2);
 				break;
 			default:
 				error('Erro: Operador inválido');
 				return;
 		}
-
-		expression.splice(operatorIndex, 2);
 	}
 
 	showExpression();
 	lastEqual = true;
 };
+
+document.getElementById('body').onkeydown = function (e) {
+    const key = e.key;
+
+    if (!isNaN(key)) {
+        e.preventDefault();
+        addNumber(Number(key));
+    } else {
+        switch(key) {
+            case '+':
+                e.preventDefault();
+                addExpression('+');
+                break;
+            case '-':
+                e.preventDefault();
+                addExpression('-');
+                break;
+            case '*':
+                e.preventDefault();
+                addExpression('×');
+                break;
+            case '/':
+                e.preventDefault();
+                addExpression('÷');
+                break;
+            case 'Enter':
+                e.preventDefault();
+                equal();
+                break;
+            case 'Backspace':
+                e.preventDefault();
+                CEFunction();
+                break;
+            case 'Delete':
+            case 'Escape':
+                e.preventDefault();
+                ACFunction();
+                break;
+            case '.':
+            case ',':
+                e.preventDefault();
+                decimalFunction();
+                break;
+            case '%':
+                e.preventDefault();
+                percentage();
+                break;
+            case '(':
+                e.preventDefault();
+                openContainer();
+                break;
+            case ')':
+                e.preventDefault();
+                closeContainer();
+                break;
+            case 'r':
+                e.preventDefault();
+                negativate();
+                break;
+            case '^':
+                e.preventDefault();
+                addExpression('^');
+                break;
+            case 'v':
+                e.preventDefault();
+                addExpression('√');
+                break;
+            default:
+                console.log('Tecla não mapeada:', key);
+                break;
+        }
+    }
+
+}

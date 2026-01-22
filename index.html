@@ -1,54 +1,106 @@
 <html>
-    <head>
-        <title>Basic Calculator</title>
-        <link rel="stylesheet" type="text/css" href="style.css" />
-    </head>
-    <body>
-        <div id="content">
-            <div id="display">
-                <input type="text" id="result" value="0" />
-            </div>
-            <div id="buttons">
-                <table>
-                    <tr>
-                        <td><div class="cel"><button class="function" onClick="openContainer()">(</button></div></td>
-                        <td><div class="cel"><button class="function" onClick="closeContainer()">)</button></div></td>
-                        <td><div class="cel"><button class="system" onClick="CEFunction()">CE</button></div></td>
-                        <td><div class="cel"><button class="system" onClick="ACFunction()">AC</button></div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="cel"><button class="number" onClick="percentage()">%</button></div></td>
-                        <td><div class="cel"><button class="function" onClick="addExpression('^')">^</button></div></td>
-                        <td><div class="cel"><button class="function" onClick="addExpression('√')">√</button></div></td>
-                        <td><div class="cel"><button class="operator" onClick="addExpression('÷')">÷</button></div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="cel"><button class="number" onClick="addNumber(7)">7</button></div></td>
-                        <td><div class="cel"><button class="number" onClick="addNumber(8)">8</button></div></td>
-                        <td><div class="cel"><button class="number" onClick="addNumber(9)">9</button></div></td>
-                        <td><div class="cel"><button class="operator" onClick="addExpression('×')">×</button></div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="cel"><button class="number" onClick="addNumber(4)">4</button></div></td>
-                        <td><div class="cel"><button class="number" onClick="addNumber(5)">5</button></div></td>
-                        <td><div class="cel"><button class="number" onClick="addNumber(6)">6</button></div></td>
-                        <td><div class="cel"><button class="operator" onClick="addExpression('-')">-</button></div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="cel"><button class="number" onClick="addNumber(1)">1</button></div></td>
-                        <td><div class="cel"><button class="number" onClick="addNumber(2)">2</button></div></td>
-                        <td><div class="cel"><button class="number" onClick="addNumber(3)">3</button></div></td>
-                        <td><div class="cel"><button class="operator" onClick="addExpression('+')">+</button></div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="cel"><button class="function" onClick="negativate()">+/-</button></div></td>
-                        <td><div class="cel"><button class="number" onClick="addNumber(0)">0</button></div></td>
-                        <td><div class="cel"><button class="function" onClick="decimalFunction()">.</button></div></td>
-                        <td><div class="cel"><button class="operator" onClick="equal()">=</button></div></td>
-                    </tr>
-                </table>
-            </div>
+
+<head>
+    <title>Basic Calculator</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body id="body">
+    <div id="content">
+        <div id="display">
+            <input type="text" id="result" value="0" readonly />
         </div>
-        <script src="script.js"></script>
-    </body>
+        <div id="buttons">
+            <table>
+                <tr>
+                    <td>
+                        <button class="function" onClick="openContainer()">(</button>
+                    </td>
+                    <td>
+                        <button class="function" onClick="closeContainer()">)</button>
+                    </td>
+                    <td>
+                        <button class="system" onClick="CEFunction()">🆑</button>
+                    </td>
+                    <td>
+                        <button class="system" onClick="ACFunction()">🛑</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="number" onClick="percentage()">%</button>
+                    </td>
+                    <td>
+                        <button class="function" onClick="addExpression('^')">x<sup>y</sup></button>
+                    </td>
+                    <td>
+                        <button class="function" onClick="addExpression('√')"><sup>y</sup>√<span>x</span>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="operator" onClick="addExpression('÷')">÷</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="number" onClick="addNumber(7)">7</button>
+                    </td>
+                    <td>
+                        <button class="number" onClick="addNumber(8)">8</button>
+                    </td>
+                    <td>
+                        <button class="number" onClick="addNumber(9)">9</button>
+                    </td>
+                    <td>
+                        <button class="operator" onClick="addExpression('×')">×</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="number" onClick="addNumber(4)">4</button>
+                    </td>
+                    <td>
+                        <button class="number" onClick="addNumber(5)">5</button>
+                    </td>
+                    <td>
+                        <button class="number" onClick="addNumber(6)">6</button>
+                    </td>
+                    <td>
+                        <button class="operator" onClick="addExpression('-')">-</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="number" onClick="addNumber(1)">1</button>
+                    </td>
+                    <td>
+                        <button class="number" onClick="addNumber(2)">2</button>
+                    </td>
+                    <td>
+                        <button class="number" onClick="addNumber(3)">3</button>
+                    </td>
+                    <td>
+                        <button class="operator" onClick="addExpression('+')">+</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="function" onClick="negativate()">+/-</button>
+                    </td>
+                    <td>
+                        <button class="number" onClick="addNumber(0)">0</button>
+                    </td>
+                    <td>
+                        <button class="function" onClick="decimalFunction()">.</button>
+                    </td>
+                    <td>
+                        <button class="operator" onClick="equal()">=</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
 </html>

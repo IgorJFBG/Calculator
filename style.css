@@ -1,56 +1,83 @@
-body {
-	margin: 0;
-	padding: 0;
-	height: 100vh;
-	background-color: #fdfdfd;
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('./assets/fonts/PressStart2P-Regular.ttf') format('truetype');
+}
 
-	display: flex;
-	align-items: center;
-	justify-content: center;
+@font-face {
+    font-family: 'Chakra Petch';
+    src: url('./assets/fonts/ChakraPetch-Regular.ttf') format('truetype');
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-color: #fdfdfd;
+
+    position: relative;
 }
 
 #content {
-	background-color: white;
-	border: 1px solid #ccc;
-	border-radius: 11px;
-}
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 
-#result {
-	border: 0px;
-	border-radius: 10px 10px 0px 0px;
-	padding: 10px;
-	background-color: #ccc;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 11px;
 
-	color: #555;
-	text-align: right;
-	font-size: 24pt;
-	font-family: 'Consolas', monospace;
+    width: 80vw;
+    height: 80vh;
+    min-width: 300px;
+    min-height: 400px;
+
+    display: flex;
+    flex-direction: column;
 }
 
 #buttons {
-	padding: 10px;
+    height: 100%;
+    flex-grow: 1;
+}
+
+#result {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    border: 0px;
+    border-radius: 10px 10px 0px 0px;
+    padding: 20px 10px;
+    background-color: #ccc;
+
+    color: #555;
+    text-align: right;
+    font-size: 6vh;
+    font-family: 'Press Start 2P', 'Consolas', monospace;
+}
+
+#buttons {
+    padding: 10px;
 }
 
 table {
-	border-collapse: collapse;
-	width: 100%;
-	border-radius: 10px;
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
 }
 
 td {
-	width: 25%;
-}
-
-#cel {
-	width: 100%;
+    width: 25%;
+    padding: 4px;
 }
 
 button {
-	width: 100%;
-	height: 75px;
-	font-size: 20pt;
-	font-family: 'Consolas', monospace;
-	border: 1px solid #ccc;
-	color: #555;
-	cursor: pointer;
+    width: 100%;
+    height: 100%;
+    font-size: 5vh;
+    font-family: 'Chakra Petch', 'Consolas', monospace;
+    border: 1px solid #ccc;
+    color: #555;
+    cursor: pointer;
 }
