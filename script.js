@@ -7,80 +7,82 @@ let priorityMultiDivisor = false;
 let priorityElevateRoot = false;
 
 const error = (message) => {
-	ACFunction();
+	ACFunction(true);
 	document.getElementById('result').value = message;
 };
 
 const getLastElement = () =>
 	expression.length === 0 ? '' : expression[expression.length - 1];
-const isOperator = (value) => ['+', '-', '×', '÷', '^', '√'].includes(value);
+const isOperator = (value) =>
+	['+', '-', '×', '÷', '^', '√', 'log'].includes(value);
 
 const formatNumber = (n, decimals = 12) => {
 	if (!isFinite(n)) return String(n);
 	return String(parseFloat(Number(n).toFixed(decimals)));
 };
 
+const degToRad = (d) => (Number(d) * Math.PI) / 180;
+
 const showExpression = () => {
-    let displayArr = [...expression];
+	let displayArr = [...expression];
 
-    let rootIndex = displayArr.indexOf('√');
+	let rootIndex = displayArr.indexOf('√');
 
-    if (rootIndex !== -1) {
-        let radicandStart = rootIndex - 1;
-        if (displayArr[rootIndex - 1] === ')') {
-            let count = 0;
-            for (let j = rootIndex - 1; j >= 0; j--) {
-                if (displayArr[j] === ')') count++;
-                if (displayArr[j] === '(') count--;
-                if (count === 0) {
-                    radicandStart = j;
-                    break;
-                }
-            }
-        }
-        const radicand = displayArr.slice(radicandStart, rootIndex);
+	if (rootIndex !== -1) {
+		let radicandStart = rootIndex - 1;
+		if (displayArr[rootIndex - 1] === ')') {
+			let count = 0;
+			for (let j = rootIndex - 1; j >= 0; j--) {
+				if (displayArr[j] === ')') count++;
+				if (displayArr[j] === '(') count--;
+				if (count === 0) {
+					radicandStart = j;
+					break;
+				}
+			}
+		}
+		const radicand = displayArr.slice(radicandStart, rootIndex);
 
-        let indexEnd = rootIndex + 1;
-        if (indexEnd < displayArr.length) {
-            if (displayArr[indexEnd] === '(') {
-                let count = 0;
-                let foundMatch = false;
-                for (let j = indexEnd; j < displayArr.length; j++) {
-                    if (displayArr[j] === '(') count++;
-                    if (displayArr[j] === ')') count--;
-                    if (count === 0) {
-                        indexEnd = j;
-                        foundMatch = true;
-                        break;
-                    }
-                }
-                // Se não encontrar o ')', define o fim como o último elemento do array
-                if (!foundMatch) {
-                    indexEnd = displayArr.length - 1;
-                }
-            }
-        } else {
-            indexEnd = rootIndex;
-        }
-        
-        const indexVal = displayArr.slice(rootIndex + 1, indexEnd + 1);
+		let indexEnd = rootIndex + 1;
+		if (indexEnd < displayArr.length) {
+			if (displayArr[indexEnd] === '(') {
+				let count = 0;
+				let foundMatch = false;
+				for (let j = indexEnd; j < displayArr.length; j++) {
+					if (displayArr[j] === '(') count++;
+					if (displayArr[j] === ')') count--;
+					if (count === 0) {
+						indexEnd = j;
+						foundMatch = true;
+						break;
+					}
+				}
+				// Se não encontrar o ')', define o fim como o último elemento do array
+				if (!foundMatch) {
+					indexEnd = displayArr.length - 1;
+				}
+			}
+		} else {
+			indexEnd = rootIndex;
+		}
 
-        displayArr.splice(
-            radicandStart, 
-            (indexEnd - radicandStart) + 1, 
-            ...indexVal, 
-            '√', 
-            ...radicand
-        );
-    }
+		const indexVal = displayArr.slice(rootIndex + 1, indexEnd + 1);
 
-	let expStr = displayArr.join(' ');
+		displayArr.splice(
+			radicandStart,
+			indexEnd - radicandStart + 1,
+			...indexVal,
+			'√',
+			...radicand,
+		);
+	}
+
+	let expStr = displayArr.join('');
 	if (expStr === '') {
 		expStr = '0';
 	}
 
 	console.log('Expressão:', expStr);
-    console.log('Containers:', containers);
 
 	document.getElementById('result').value = expStr;
 };
@@ -129,19 +131,20 @@ const addNumber = (number) => {
 	showExpression();
 };
 
-const ACFunction = () => {
+const ACFunction = (error = false) => {
 	expression = [];
-    containers = 0;
+	containers = 0;
 	showExpression();
+	if (!error) console.clear();
 };
 
 const CEFunction = () => {
 	const item = expression.pop();
-    if (item === '(') {
-        containers--;
-    } else if (item === ')') {
-        containers++;
-    }
+	if (item === '(') {
+		containers--;
+	} else if (item === ')') {
+		containers++;
+	}
 	showExpression();
 };
 
@@ -157,7 +160,7 @@ const decimalFunction = () => {
 };
 
 const negativate = () => {
-	if (!isNaN(getLastElement())) {
+	if (expression.length > 0 && !isNaN(getLastElement())) {
 		expression[expression.length - 1] = formatNumber(
 			Number(getLastElement()) * -1,
 		);
@@ -190,7 +193,7 @@ const closeContainer = () => {
 };
 
 const percentage = () => {
-	if (!isNaN(getLastElement())) {
+	if (expression.length > 0 && !isNaN(getLastElement())) {
 		if (expression.length >= 3) {
 			if (
 				expression[expression.length - 2] === '+' ||
@@ -212,6 +215,265 @@ const percentage = () => {
 	showExpression();
 };
 
+const sinFunction = () => {
+	if (expression.length > 0) {
+		for (let i = expression.length - 1; i >= 0; i--) {
+			if (!isNaN(expression[i])) {
+				expression[i] = formatNumber(
+					Math.sin(degToRad(Number(expression[i]))),
+				);
+				break;
+			}
+		}
+	}
+	showExpression();
+};
+
+const cosFunction = () => {
+	if (expression.length > 0) {
+		for (let i = expression.length - 1; i >= 0; i--) {
+			if (!isNaN(expression[i])) {
+				console.log('Cosseno de', expression[i]);
+				expression[i] = formatNumber(
+					Math.cos(degToRad(Number(expression[i]))),
+				);
+				break;
+			}
+		}
+	}
+	showExpression();
+};
+
+const tanFunction = () => {
+	if (expression.length > 0) {
+		for (let i = expression.length - 1; i >= 0; i--) {
+			if (!isNaN(expression[i])) {
+				if (
+					Math.abs(Math.cos(degToRad(Number(expression[i])))) < 1e-12
+				) {
+					error('Tangente indefinida');
+					return;
+				}
+				expression[i] = formatNumber(
+					Math.tan(degToRad(Number(expression[i]))),
+				);
+				break;
+			}
+		}
+	}
+	showExpression();
+};
+
+const factorial = () => {
+	if (expression.length > 0) {
+		for (let i = expression.length - 1; i >= 0; i--) {
+			if (!isNaN(expression[i])) {
+				let num = Number(expression[i]);
+				let fact = 1;
+				for (let j = 1; j <= num; j++) {
+					fact *= j;
+				}
+				expression[i] = formatNumber(fact);
+				break;
+			}
+		}
+	}
+	showExpression();
+};
+
+const eulerConstant = () => {
+	if (
+		isOperator(getLastElement()) ||
+		expression.length === 0 ||
+		getLastElement() === '('
+	) {
+		expression.push(formatNumber(Math.E));
+	} else if (getLastElement() === ')') {
+		addExpression('×');
+		expression.push(formatNumber(Math.E));
+	} else {
+		CEFunction();
+		expression.push(formatNumber(Math.E));
+	}
+	showExpression();
+};
+
+const piConstant = () => {
+	if (
+		isOperator(getLastElement()) ||
+		expression.length === 0 ||
+		getLastElement() === '('
+	) {
+		expression.push(formatNumber(Math.PI));
+	} else if (getLastElement() === ')') {
+		addExpression('×');
+		expression.push(formatNumber(Math.PI));
+	} else {
+		CEFunction();
+		expression.push(formatNumber(Math.PI));
+	}
+	showExpression();
+};
+
+const solve = (expression) => {
+	let exp = expression;
+	console.log('Recebi a expressão:', exp.join(' '));
+	if (exp.length === 1) return exp;
+
+	// Parenthesis
+	if (exp.includes('(')) {
+		let parenthesisStart = -1;
+		let parenthesisEnd = -1;
+		for (let i = 0; i < exp.length; i++) {
+			if (exp[i] === '(') {
+				parenthesisStart = i;
+				console.log(
+					'Encontrada abertura de parênteses em:',
+					parenthesisStart,
+				);
+				break;
+			}
+		}
+
+		for (let i = exp.length - 1; i >= 0; i--) {
+			console.log(exp[i]);
+			if (exp[i] === ')') {
+				parenthesisEnd = i;
+				console.log(
+					'Encontrado fechamento de parênteses em:',
+					parenthesisEnd,
+				);
+				break;
+			}
+		}
+
+		console.log(
+			'Resolvendo parênteses:',
+			exp.slice(parenthesisStart + 1, parenthesisEnd).join(' '),
+		);
+		exp[parenthesisStart] = solve(
+			exp.slice(parenthesisStart + 1, parenthesisEnd),
+		);
+		exp.splice(parenthesisStart + 1, parenthesisEnd - parenthesisStart);
+	}
+	if (exp.length === 1) return exp;
+
+	// Logarithm
+	while (exp.includes('log')) {
+		let logIndex = exp.indexOf('log');
+		let result = formatNumber(
+			Math.log(exp[logIndex - 1], exp[logIndex + 1]),
+		);
+		exp[logIndex - 1] = result;
+		exp.splice(logIndex, 2);
+	}
+
+	console.log('Após logaritmo:', exp.join(' '));
+	if (exp.length === 1) return exp;
+
+	// Root
+	while (exp.includes('√')) {
+		let rootIndex = exp.indexOf('√');
+		let result = formatNumber(
+			Math.pow(
+				Number(exp[rootIndex - 1]),
+				1 / Number(exp[rootIndex + 1]),
+			),
+		);
+		exp[rootIndex - 1] = result;
+		exp.splice(rootIndex, 2);
+	}
+
+	console.log('Após raiz:', exp.join(' '));
+	if (exp.length === 1) return exp;
+
+	// Exponentiation
+	while (exp.includes('^')) {
+		let expIndex = exp.indexOf('^');
+		let result = formatNumber(
+			Math.pow(Number(exp[expIndex - 1]), Number(exp[expIndex + 1])),
+		);
+		exp[expIndex - 1] = result;
+		exp.splice(expIndex, 2);
+	}
+
+	console.log('Após exponenciação:', exp.join(' '));
+	if (exp.length === 1) return exp;
+
+	// Division
+	while (exp.includes('÷')) {
+		let divIndex = exp.indexOf('÷');
+		let result = formatNumber(
+			Number(exp[divIndex - 1]) / Number(exp[divIndex + 1]),
+		);
+		exp[divIndex - 1] = result;
+		exp.splice(divIndex, 2);
+	}
+
+	console.log('Após divisão:', exp.join(' '));
+	if (exp.length === 1) return exp;
+
+	// Multiplication
+	while (exp.includes('×')) {
+		let multIndex = exp.indexOf('×');
+		let result = formatNumber(
+			Number(exp[multIndex - 1]) * Number(exp[multIndex + 1]),
+		);
+		exp[multIndex - 1] = result;
+		exp.splice(multIndex, 2);
+	}
+
+	console.log('Após multiplicação:', exp.join(' '));
+	if (exp.length === 1) return exp;
+
+	// Subtraction
+	while (exp.includes('-')) {
+		let subIndex = exp.indexOf('-');
+		let result = formatNumber(
+			Number(exp[subIndex - 1]) - Number(exp[subIndex + 1]),
+		);
+		exp[subIndex - 1] = result;
+		exp.splice(subIndex, 2);
+	}
+
+	console.log('Após subtração:', exp.join(' '));
+	if (exp.length === 1) return exp;
+
+	// Addition
+	while (exp.includes('+')) {
+		let addIndex = exp.indexOf('+');
+		let result = formatNumber(
+			Number(exp[addIndex - 1]) + Number(exp[addIndex + 1]),
+		);
+		exp[addIndex - 1] = result;
+		exp.splice(addIndex, 2);
+	}
+
+	console.log('Após adição:', exp.join(' '));
+
+	return exp;
+};
+
+const equal = () => {
+	if (expression.length === 0) return;
+
+	while (containers > 0) {
+		closeContainer();
+	}
+
+	expression = solve(expression);
+
+	if (expression.length === 1) {
+		showExpression();
+		lastEqual = true;
+	} else {
+		error('Erro no cálculo');
+	}
+
+	lastEqual = true;
+};
+
+/*
 const equal = () => {
 	while (containers > 0) {
 		closeContainer();
@@ -285,7 +547,7 @@ const equal = () => {
 					Number(expression[firstNumIndex]) +
 						Number(expression[secondNumIndex]),
 				);
-                expression.splice(operatorIndex, 2);
+				expression.splice(operatorIndex, 2);
 				break;
 			case '-':
 				if (
@@ -310,17 +572,17 @@ const equal = () => {
 					Number(expression[firstNumIndex]) -
 						Number(expression[secondNumIndex]),
 				);
-                expression.splice(operatorIndex, 2);
+				expression.splice(operatorIndex, 2);
 				break;
 			case '×':
-                if (
-                    expression[secondNumIndex + 1] === '^' ||
-                    expression[secondNumIndex + 1] === '√'
-                ) {
-                    priorityElevateRoot = true;
-                    startIndex += 2;
-                    break;
-                }
+				if (
+					expression[secondNumIndex + 1] === '^' ||
+					expression[secondNumIndex + 1] === '√'
+				) {
+					priorityElevateRoot = true;
+					startIndex += 2;
+					break;
+				}
 
 				expression[firstNumIndex] = formatNumber(
 					Number(expression[firstNumIndex]) *
@@ -331,20 +593,20 @@ const equal = () => {
 					priorityMultiDivisor = false;
 					startIndex -= 2;
 				}
-                expression.splice(operatorIndex, 2);
+				expression.splice(operatorIndex, 2);
 				break;
 			case '÷':
 				if (
-                    expression[secondNumIndex + 1] === '^' ||
-                    expression[secondNumIndex + 1] === '√'
-                ) {
-                    priorityElevateRoot = true;
-                    startIndex += 2;
-                    break;
-                }
+					expression[secondNumIndex + 1] === '^' ||
+					expression[secondNumIndex + 1] === '√'
+				) {
+					priorityElevateRoot = true;
+					startIndex += 2;
+					break;
+				}
 
 				if (Number(expression[secondNumIndex]) === 0) {
-					error('Erro: Divisão por zero');
+					error('Divisão por zero');
 					return;
 				} else {
 					expression[firstNumIndex] = formatNumber(
@@ -357,7 +619,7 @@ const equal = () => {
 					priorityMultiDivisor = false;
 					startIndex -= 2;
 				}
-                expression.splice(operatorIndex, 2);
+				expression.splice(operatorIndex, 2);
 				break;
 			case '^':
 				expression[firstNumIndex] = formatNumber(
@@ -371,7 +633,7 @@ const equal = () => {
 					priorityElevateRoot = false;
 					startIndex -= 2;
 				}
-                expression.splice(operatorIndex, 2);
+				expression.splice(operatorIndex, 2);
 				break;
 			case '√':
 				expression[firstNumIndex] = formatNumber(
@@ -385,10 +647,10 @@ const equal = () => {
 					priorityElevateRoot = false;
 					startIndex -= 2;
 				}
-                expression.splice(operatorIndex, 2);
+				expression.splice(operatorIndex, 2);
 				break;
 			default:
-				error('Erro: Operador inválido');
+				error('Operador inválido');
 				return;
 		}
 	}
@@ -396,77 +658,78 @@ const equal = () => {
 	showExpression();
 	lastEqual = true;
 };
+*/
 
 document.getElementById('body').onkeydown = function (e) {
-    const key = e.key;
+	const key = e.key;
 
-    if (!isNaN(key)) {
-        e.preventDefault();
-        addNumber(Number(key));
-    } else {
-        switch(key) {
-            case '+':
-                e.preventDefault();
-                addExpression('+');
-                break;
-            case '-':
-                e.preventDefault();
-                addExpression('-');
-                break;
-            case '*':
-                e.preventDefault();
-                addExpression('×');
-                break;
-            case '/':
-                e.preventDefault();
-                addExpression('÷');
-                break;
-            case 'Enter':
-                e.preventDefault();
-                equal();
-                break;
-            case 'Backspace':
-                e.preventDefault();
-                CEFunction();
-                break;
-            case 'Delete':
-            case 'Escape':
-                e.preventDefault();
-                ACFunction();
-                break;
-            case '.':
-            case ',':
-                e.preventDefault();
-                decimalFunction();
-                break;
-            case '%':
-                e.preventDefault();
-                percentage();
-                break;
-            case '(':
-                e.preventDefault();
-                openContainer();
-                break;
-            case ')':
-                e.preventDefault();
-                closeContainer();
-                break;
-            case 'r':
-                e.preventDefault();
-                negativate();
-                break;
-            case '^':
-                e.preventDefault();
-                addExpression('^');
-                break;
-            case 'v':
-                e.preventDefault();
-                addExpression('√');
-                break;
-            default:
-                console.log('Tecla não mapeada:', key);
-                break;
-        }
-    }
+	if (key === ' ') return;
 
-}
+	if (!isNaN(key)) {
+		e.preventDefault();
+		addNumber(Number(key));
+	} else {
+		switch (key) {
+			case '+':
+				e.preventDefault();
+				addExpression('+');
+				break;
+			case '-':
+				e.preventDefault();
+				addExpression('-');
+				break;
+			case '*':
+				e.preventDefault();
+				addExpression('×');
+				break;
+			case '/':
+				e.preventDefault();
+				addExpression('÷');
+				break;
+			case 'Enter':
+				e.preventDefault();
+				equal();
+				break;
+			case 'Backspace':
+				e.preventDefault();
+				CEFunction();
+				break;
+			case 'Delete':
+			case 'Escape':
+				e.preventDefault();
+				ACFunction();
+				break;
+			case '.':
+			case ',':
+				e.preventDefault();
+				decimalFunction();
+				break;
+			case '%':
+				e.preventDefault();
+				percentage();
+				break;
+			case '(':
+				e.preventDefault();
+				openContainer();
+				break;
+			case ')':
+				e.preventDefault();
+				closeContainer();
+				break;
+			case 'r':
+				e.preventDefault();
+				negativate();
+				break;
+			case '^':
+				e.preventDefault();
+				addExpression('^');
+				break;
+			case 'v':
+				e.preventDefault();
+				addExpression('√');
+				break;
+			default:
+				break;
+		}
+	}
+};

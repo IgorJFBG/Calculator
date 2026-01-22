@@ -14,6 +14,9 @@
             <table>
                 <tr>
                     <td>
+                        <button class="system" onClick="CEFunction()" disabled>🔶</button>
+                    </td>
+                    <td>
                         <button class="function" onClick="openContainer()">(</button>
                     </td>
                     <td>
@@ -28,17 +31,36 @@
                 </tr>
                 <tr>
                     <td>
+                        <button class="function" onClick="factorial()">n!</button>
+                    </td>
+                    <td>
+                        <button class="function" onClick="sinFunction()">sen</button>
+                    </td>
+                    <td>
+                        <button class="function" onClick="cosFunction()">cos</button>
+                    </td>
+                    <td>
+                        <button class="function" onClick="tanFunction()">tan</button>
+                    </td>
+                    <td>
                         <button class="number" onClick="percentage()">%</button>
                     </td>
+                </tr>
+                <tr>
                     <td>
-                        <button class="function" onClick="addExpression('^')">x<sup>y</sup></button>
+                        <button class="function" onClick="" disabled></button>
                     </td>
                     <td>
-                        <button class="function" onClick="addExpression('√')"><sup>y</sup>√<span>x</span>
-                        </button>
+                        <button class="function" onClick="eulerConstant()">e</button>
                     </td>
                     <td>
-                        <button class="operator" onClick="addExpression('÷')">÷</button>
+                        <button class="function" onClick="piConstant()">π</button>
+                    </td>
+                    <td>
+                        <button class="function" onClick="addExpression('log')">log</button>
+                    </td>
+                    <td>
+                        <button class="function" onClick="" disabled></button>
                     </td>
                 </tr>
                 <tr>
@@ -52,7 +74,11 @@
                         <button class="number" onClick="addNumber(9)">9</button>
                     </td>
                     <td>
-                        <button class="operator" onClick="addExpression('×')">×</button>
+                        <button class="function" onClick="addExpression('^')">x<sup>y</sup></button>
+                    </td>
+                    <td>
+                        <button class="function" onClick="addExpression('√')"><sup>y</sup>√<span>x</span>
+                        </button>
                     </td>
                 </tr>
                 <tr>
@@ -66,7 +92,10 @@
                         <button class="number" onClick="addNumber(6)">6</button>
                     </td>
                     <td>
-                        <button class="operator" onClick="addExpression('-')">-</button>
+                        <button class="operator" onClick="addExpression('×')">×</button>
+                    </td>
+                    <td>
+                        <button class="operator" onClick="addExpression('÷')">÷</button>
                     </td>
                 </tr>
                 <tr>
@@ -82,6 +111,9 @@
                     <td>
                         <button class="operator" onClick="addExpression('+')">+</button>
                     </td>
+                    <td>
+                        <button class="operator" onClick="addExpression('-')">-</button>
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -93,7 +125,7 @@
                     <td>
                         <button class="function" onClick="decimalFunction()">.</button>
                     </td>
-                    <td>
+                    <td colspan="2">
                         <button class="operator" onClick="equal()">=</button>
                     </td>
                 </tr>
